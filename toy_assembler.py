@@ -6,9 +6,9 @@ parser.add_argument('-i', type = str, required = True)
 args = parser.parse_args()
 # # # # # # # # # # # # 
 class IdSequence:
-    #def __init__(self, id, sequence):
-        #self.id = id
-        #self.sequence = sequence
+    def __init__(self, id, sequence):
+        self.id = id
+        self.sequence = sequence
 # # # # # # # # # # # 
 def fasta_iter(filename):
     fin = open(filename, 'rb')
@@ -20,7 +20,11 @@ def fasta_iter(filename):
         seq = "".join(str(s, 'utf-8').strip() for s in faiter.__next__())
         yield name, seq
 
-sequences = sorted([s for s in fasta_iter(args.i)], key = len, reverse = True)
+sequences = []
+for i in fasta_iter(args.i):
+    n = IdSequence(i[0], i[1])
+    sequences.append(n.sequence)
+sequences = sorted(sequences, key = len, reverse = True)
 
 # # # # # # # # # # # # 
 def score(sequence1, sequence2, offset):
