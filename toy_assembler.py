@@ -1,26 +1,26 @@
-#import argparse
-#from itertools import groupby
+import argparse
+from itertools import groupby
 
-#parser = argparse.ArgumentParser(description='toy assembler')
-#parser.add_argument('-i', type = str, required = True)
-#args = parser.parse_args()
-## # # # # # # # # # # # 
-#class IdSequence:
+parser = argparse.ArgumentParser(description='toy assembler')
+parser.add_argument('-i', type = str, required = True)
+args = parser.parse_args()
+# # # # # # # # # # # # 
+class IdSequence:
     #def __init__(self, id, sequence):
         #self.id = id
         #self.sequence = sequence
-## # # # # # # # # # # 
-#def fasta_iter(filename):
-    #fin = open(filename, 'rb')
-    #faiter = (x[1] for x in groupby(fin, lambda line: str(line, 'utf-8')[0] == ">"))
-    #for header in faiter:
-        #headerstr = str(header.__next__(), 'utf-8')
-        #long_name = headerstr.strip().replace('>', '')
-        #name = long_name.split()[0]
-        #seq = "".join(str(s, 'utf-8').strip() for s in faiter.__next__())
-        #yield name, seq
+# # # # # # # # # # # 
+def fasta_iter(filename):
+    fin = open(filename, 'rb')
+    faiter = (x[1] for x in groupby(fin, lambda line: str(line, 'utf-8')[0] == ">"))
+    for header in faiter:
+        headerstr = str(header.__next__(), 'utf-8')
+        long_name = headerstr.strip().replace('>', '')
+        name = long_name.split()[0]
+        seq = "".join(str(s, 'utf-8').strip() for s in faiter.__next__())
+        yield name, seq
 
-#sequences = sorted([s for s in fasta_iter(args.i)], key = len, reverse = True)
+sequences = sorted([s for s in fasta_iter(args.i)], key = len, reverse = True)
 
 # # # # # # # # # # # # 
 def score(sequence1, sequence2, offset):
@@ -73,5 +73,6 @@ def assemble(sequence, others):
 def assemble_helper(dnas):
     return assemble(dnas[0], dnas[1:])
 # # # # # # # # # # # # 
-test = sorted(["ATTAATGCAGATCA", "GAATCATCGATTAAT", "ATGACAGATAC"], key = len)
-print(assemble_helper(test))
+f = open("assembly.txt", "w")
+f.write(assemble_helper(sequences))
+f.close()
